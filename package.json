@@ -1,13 +1,14 @@
 {
   "dependencies": {
+    "@types/websocket": "^1.0.10",
     "tsc": "^2.0.4",
-    "typescript": "^5.4.2"
+    "typescript": "^5.4.2",
+    "websocket": "^1.0.34"
   },
   "name": "chat-app",
   "description": "",
   "version": "1.0.0",
   "main": "index.js",
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
