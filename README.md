@@ -7,3 +7,8 @@
 
 
  npm install websocket 
+ npm i zod
+
+ npx tsc -b
+
+ node di

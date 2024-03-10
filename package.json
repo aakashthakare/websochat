@@ -3,7 +3,8 @@
     "@types/websocket": "^1.0.10",
     "tsc": "^2.0.4",
     "typescript": "^5.4.2",
-    "websocket": "^1.0.34"
+    "websocket": "^1.0.34",
+    "zod": "^3.22.4"
   },
   "name": "chat-app",
   "description": "",
