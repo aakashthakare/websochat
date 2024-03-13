@@ -12,3 +12,7 @@
  npx tsc -b
 
  node di
+
+ node dist/index.js
+
+ brew install serve

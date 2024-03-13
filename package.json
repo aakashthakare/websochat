@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@types/websocket": "^1.0.10",
+    "serve": "^14.2.1",
     "tsc": "^2.0.4",
     "typescript": "^5.4.2",
     "websocket": "^1.0.34",

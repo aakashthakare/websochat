@@ -24,7 +24,7 @@ const wsServer = new WebSocketServer({
     // facilities built into the protocol and the browser.  You should
     // *always* verify the connection's origin and decide whether or not
     // to accept it.
-    autoAcceptConnections: true
+    autoAcceptConnections: false
 });
 
 function originIsAllowed(origin: any) {
@@ -32,6 +32,8 @@ function originIsAllowed(origin: any) {
 }
 
 wsServer.on('request', function(request) {
+    console.log("Inside connect");
+    
     if (!originIsAllowed(request.origin)) {
       // Make sure we only accept requests from an allowed origin
       request.reject();
@@ -45,6 +47,7 @@ wsServer.on('request', function(request) {
         if (message.type === 'utf8') {
 
             try {
+                console.log(message.utf8Data)
                 messageHandler(connection, JSON.parse(message.utf8Data))
             } catch(e) {
                 console.log("Failed to handle the message.")
@@ -62,6 +65,7 @@ wsServer.on('request', function(request) {
 
 function messageHandler(ws: connection, message: IncomingMessage) {
     if(message.type == SupportedMessage.JoinRoom) {
+        console.log("User Joined.");
         const payload = message.payload;
         userManager.addUser(payload.name, payload.userId, payload.roomId, ws)
     }
