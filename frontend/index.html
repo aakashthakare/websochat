@@ -1,21 +1,55 @@
 <html>
     <head>
+        <style>
+            .chat-wrapper {
+                width: 300px;
+                height: 500px;
+                background: lightgrey;
+                overflow: auto;
+            }
+            .chat {
+                width: 250px;
+                border: 1px solid gray;
+                height: auto;
+                border-radius: 10px;
+                margin: 5px;
+                padding: 5px;
+            }
+            .vote-buttons {
+                color: white;
+                margin: 5px;
+                border: none;
+                border-radius: 5px;
+                height: 25px;
+                width: 40px;
+                cursor: pointer;
+            }
+            .up-vote-buttons {background: rgb(89, 184, 89);}
+            .down-vote-buttons {background: rgb(214, 89, 89);}
 
-    </head>
-    <body>
-        <script>
+            .current-user-message {
+                background-color: lightskyblue;
+                float: right;
+            }
+            .other-user-message {
+                background-color: lightgoldenrodyellow;
+                float: left;
+            }
+        </style>
+         <script>
             const ws = new WebSocket("ws://localhost:8080", "echo-protocol");
             userId = Math.floor(Math.random() * 10000);
             userName = "User " + userId + ": ";
             chatId = "2";
+            roomId = "2";
 
             ws.onopen = function() {
                ws.send(JSON.stringify({
                     type: "JOIN_ROOM",
                     payload: {
                         name: userName,
-                        userId: userId,
-                        roomId: "2"
+                        userId,
+                        roomId
                     }
                }));
             }
@@ -26,29 +60,39 @@
                     
                     if(type == "ADD_CHAT") {
                         const textNode = document.createElement("p");
-                        textNode.innerHTML = payload.name + ": " + payload.message;
+                        textNode.innerHTML = payload.name + ": " + payload.message + "</br>";
+
+                        if(payload.name == userName) {
+                            textNode.setAttribute("class", "chat current-user-message");
+                        } else {
+                            textNode.setAttribute("class", "chat other-user-message");
+                            
+                        }
                         
                         const upvoteButton = document.createElement("button");
-                        upvoteButton.innerHTML = `(${payload.upvotes})`;
+                        upvoteButton.innerHTML = "↑" + `${payload.upvotes}`;
                         upvoteButton.setAttribute("onclick", `sendUpvotes(${payload.chatId})`);
                         upvoteButton.setAttribute("id", `up-message-${payload.chatId}`);
+                        upvoteButton.setAttribute("class", "vote-buttons up-vote-buttons");
 
                         const downvoteButton = document.createElement("button");
-                        downvoteButton.innerHTML = `(${payload.upvotes})`;
+                        downvoteButton.innerHTML = "↓" + `${payload.upvotes}`;
                         downvoteButton.setAttribute("onclick", `sendDownvotes(${payload.chatId})`);
                         downvoteButton.setAttribute("id", `down-message-${payload.chatId}`);
+                        downvoteButton.setAttribute("class", "vote-buttons down-vote-buttons");
                         
+                        textNode.appendChild(upvoteButton);
+                        textNode.appendChild(downvoteButton);
                         document.getElementById("chats").appendChild(textNode);
-                        document.getElementById("chats").appendChild(upvoteButton);
-                        document.getElementById("chats").appendChild(downvoteButton);
+                        
                     }
 
                     if(type == "UPDATE_CHAT") {
                         const upvoteButton = document.getElementById(`up-message-${payload.chatId}`);
-                        upvoteButton.innerHTML = `(${payload.upvotes})`;
+                        upvoteButton.innerHTML = "↑" + `${payload.upvotes}`;
 
                         const downvoteButton = document.getElementById(`down-message-${payload.chatId}`);
-                        downvoteButton.innerHTML = `(${payload.downvotes})`;
+                        downvoteButton.innerHTML = "↓" + `${payload.downvotes}`;
                     }
                 } catch (e) {
                     console.error(e)
@@ -60,8 +104,8 @@
                     type: "UPVOTE_MESSAGE",
                     payload: {
                         chatId,
-                        userId: userId,
-                        roomId: "2"
+                        userId,
+                        roomId,
                     }
                }));
             }
@@ -71,26 +115,46 @@
                     type: "DOWNVOTE_MESSAGE",
                     payload: {
                         chatId,
-                        userId: userId,
-                        roomId: "2"
+                        userId,
+                        roomId
                     }
                }));
             }
 
             function sendChat() {
-                ws.send(JSON.stringify({
+                const msg = document.getElementById("inputtext").value;
+
+                if(msg) {
+                    ws.send(JSON.stringify({
                     type: "SEND_MESSAGE",
                     payload: {
-                        message: document.getElementById("inputtext").value,
-                        userId: userId,
+                        message: msg,
+                        userId,
                         chatId,
-                        roomId: "2"
+                        roomId
+                            }
+                    }));
+                    document.getElementById("inputtext").value = "";
+                }
+            }
+            
+            window.onload = function() {
+                var input = document.getElementById("inputtext");
+            
+                input.addEventListener("keypress", function(event) {
+                
+                    if (event.key === "Enter") {
+                        event.preventDefault();
+                        document.getElementById("send").click();
                     }
-               }));
+                });
             }
         </script>
-        <div id = "chats"></div>
+    </head>
+    <body>
+       
+        <div id = "chats" class = "chat-wrapper"></div>
         <input type="text" id = "inputtext"/>
-        <button onclick="sendChat();">Send</button>
+        <input type="button" id="send" value="Send" onclick="sendChat();">
     </body>
 </html>
