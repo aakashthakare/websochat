@@ -59,6 +59,7 @@
             userName = "User " + userId;
             chatId = "2";
             roomId = "2";
+            const upvoteChar = "˄ ", downvoteChar = "˅ ";
 
             ws.onopen = function() {
                ws.send(JSON.stringify({
@@ -80,13 +81,13 @@
                         textNode.innerHTML = payload.name + ": " + payload.message + "</br>";
 
                         const upvoteButton = document.createElement("button");
-                        upvoteButton.innerHTML = "↑" + `${payload.upvotes}`;
+                        upvoteButton.innerHTML = upvoteChar + `${payload.upvotes}`;
                         upvoteButton.setAttribute("onclick", `sendUpvotes(${payload.chatId})`);
                         upvoteButton.setAttribute("id", `up-message-${payload.chatId}`);
                         upvoteButton.setAttribute("class", "vote-buttons up-vote-buttons");
 
                         const downvoteButton = document.createElement("button");
-                        downvoteButton.innerHTML = "↓" + `${payload.upvotes}`;
+                        downvoteButton.innerHTML = downvoteChar + `${payload.upvotes}`;
                         downvoteButton.setAttribute("onclick", `sendDownvotes(${payload.chatId})`);
                         downvoteButton.setAttribute("id", `down-message-${payload.chatId}`);
                         downvoteButton.setAttribute("class", "vote-buttons down-vote-buttons");
@@ -106,10 +107,10 @@
 
                     if(type == "UPDATE_CHAT") {
                         const upvoteButton = document.getElementById(`up-message-${payload.chatId}`);
-                        upvoteButton.innerHTML = "↑" + `${payload.upvotes}`;
+                        upvoteButton.innerHTML = upvoteChar + `${payload.upvotes}`;
 
                         const downvoteButton = document.getElementById(`down-message-${payload.chatId}`);
-                        downvoteButton.innerHTML = "↓" + `${payload.downvotes}`;
+                        downvoteButton.innerHTML = downvoteChar + `${payload.downvotes}`;
                     }
                 } catch (e) {
                     console.error(e)
