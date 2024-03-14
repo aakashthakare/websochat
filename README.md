@@ -19,3 +19,4 @@ brew install serve
 - Show alert if user tries to upvote or down vote their own message
 - Allow user to vote only once
 - Pin top voted comments on chat
+- Either upvote/downvote not both
