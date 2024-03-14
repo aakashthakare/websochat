@@ -6,13 +6,14 @@
         <script>
             const ws = new WebSocket("ws://localhost:8080", "echo-protocol");
             userId = Math.floor(Math.random() * 10000);
+            userName = "User " + userId + ": ";
             chatId = "2";
 
             ws.onopen = function() {
                ws.send(JSON.stringify({
                     type: "JOIN_ROOM",
                     payload: {
-                        name: "Akash",
+                        name: userName,
                         userId: userId,
                         roomId: "2"
                     }
@@ -22,10 +23,10 @@
             ws.onmessage = function(event) {
                 try {
                     const {payload, type} = JSON.parse(event.data);
-                    console.log("FDFD" + `${payload}`);
+                    
                     if(type == "ADD_CHAT") {
                         const textNode = document.createElement("p");
-                        textNode.innerHTML =   payload.message;
+                        textNode.innerHTML = payload.name + ": " + payload.message;
                         
                         const upvoteButton = document.createElement("button");
                         upvoteButton.innerHTML = `(${payload.upvotes})`;
