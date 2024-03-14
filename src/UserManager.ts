@@ -29,10 +29,14 @@ export class UserManager {
             id: userId,
             name,
             connection: ws
+        });
+        ws.on('close', (reasonCode, description) => {
+            this.removeUser(userId, roomId);
         })
     }
 
     removeUser(userId: string, roomId: string){
+        console.log("User Removed");
         const users = this.rooms.get(roomId)?.users;
         if(users) {
             users.filter(({id}) => id != userId);
@@ -55,7 +59,8 @@ export class UserManager {
             console.log("User not found in database");
         }
 
-       room?.users.forEach(({connection}) => {
+       room?.users.forEach(({connection, id}) => {
+            console.log("Outgoing message : " + JSON.stringify(message));
             connection.sendUTF(JSON.stringify(message));
        })
     }

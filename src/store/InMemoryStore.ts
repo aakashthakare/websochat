@@ -1,4 +1,4 @@
-import { Chat, Store, UserId } from "./store/Store";
+import { Chat, Store, UserId } from "./Store";
 
 let globalChatId = 0;
 
@@ -32,9 +32,12 @@ export  class InMemoryStore implements Store {
     }
 
     addChat(userId: UserId, name: string, roomId: string, message: string) {
+        if(!this.store.get(roomId)) {
+            this.initRoom(roomId);
+        }
         const room = this.store.get(roomId);
         if(!room) {
-            return
+            return;
         }
         const chat = {
             id: (globalChatId++).toString(),

@@ -2,7 +2,7 @@ import {server as WebSocketServer, connection} from "websocket"
 import http from 'http';
 import { IncomingMessage, SupportedMessage } from "./messages/incomingMessage";
 import { UserManager } from "./UserManager";
-import { InMemoryStore } from "./InMemoryStore";
+import { InMemoryStore } from "./store/InMemoryStore";
 import { OutgoingMessage, SupportedMessage as OutgoingSupportedMessages } from "./messages/outgoingMessages";
 
 const userManager = new UserManager();
@@ -32,8 +32,6 @@ function originIsAllowed(origin: any) {
 }
 
 wsServer.on('request', function(request) {
-    console.log("Inside connect");
-    
     if (!originIsAllowed(request.origin)) {
       // Make sure we only accept requests from an allowed origin
       request.reject();
@@ -73,7 +71,7 @@ function messageHandler(ws: connection, message: IncomingMessage) {
     if(message.type == SupportedMessage.SendMessage) {
         const payload = message.payload;
         
-        const user = userManager.getUser(payload.roomId, payload.userId);
+        const user = userManager.getUser(payload.userId, payload.roomId);
         if(!user) {
             console.log("User not found in database");
             return;
