@@ -1,9 +1,9 @@
 import {server as WebSocketServer, connection} from "websocket"
 import http from 'http';
-import { IncomingMessage, SupportedMessage } from "./messages/incomingMessage";
-import { UserManager } from "./UserManager";
+import { IncomingMessage, SupportedMessage } from "./messages/Incoming";
+import { UserManager } from "./manager/UserManager";
 import { InMemoryStore } from "./store/InMemoryStore";
-import { OutgoingMessage, SupportedMessage as OutgoingSupportedMessages } from "./messages/outgoingMessages";
+import { OutgoingMessage, SupportedMessage as OutgoingSupportedMessages } from "./messages/Outgoing";
 
 const userManager = new UserManager();
 const store = new InMemoryStore();
