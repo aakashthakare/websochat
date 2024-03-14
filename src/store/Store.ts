@@ -6,6 +6,7 @@ export interface Chat {
     name: string;
     message: string;
     upvotes: UserId[];
+    downvotes: UserId[];
 }
 
 export abstract class Store {
@@ -21,6 +22,10 @@ export abstract class Store {
         
     }
     upvote(userId: UserId, roomId: string, chatId: string){
+
+    }
+
+    downvote(userId: UserId, roomId: string, chatId: string){
 
     }
 

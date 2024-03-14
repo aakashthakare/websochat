@@ -44,7 +44,8 @@ export  class InMemoryStore implements Store {
             userId,
             name,
             message,
-            upvotes: []
+            upvotes: [],
+            downvotes: []
         }
         room.chats.push(chat);
         return chat;
@@ -59,6 +60,19 @@ export  class InMemoryStore implements Store {
 
         if(chat) {
             chat.upvotes.push(userId);
+        }
+        return chat;
+    }
+
+    downvote(userId: UserId, roomId: string, chatId: string) {
+        const room = this.store.get(roomId);
+        if(!room) {
+            return
+        }
+        const chat = room.chats.find(({id}) => id == chatId);
+
+        if(chat) {
+            chat.downvotes.push(userId);
         }
         return chat;
     }

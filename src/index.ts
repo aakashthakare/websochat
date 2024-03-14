@@ -88,6 +88,7 @@ function messageHandler(ws: connection, message: IncomingMessage) {
                 message: payload.message,
                 name: user.name,
                 upvotes: 0,
+                downvotes: 0,
                 chatId: chat.id
             }
         }
@@ -105,7 +106,26 @@ function messageHandler(ws: connection, message: IncomingMessage) {
             payload: {
                 roomId: payload.roomId,
                 chatId: payload.chatId,
-                upvotes: chat.upvotes.length
+                upvotes: chat.upvotes.length,
+                downvotes: chat.downvotes.length
+            }
+        }
+        userManager.broadcast(payload.roomId, payload.userId, outgoingPayload)
+    }
+
+    if(message.type == SupportedMessage.DownvoteMessage) {
+        const payload = message.payload;
+        const chat = store.downvote(payload.userId, payload.roomId, payload.chatId);
+        
+        if(!chat) return;
+
+        const outgoingPayload: OutgoingMessage = {
+            type: OutgoingSupportedMessages.UpdateChat,
+            payload: {
+                roomId: payload.roomId,
+                chatId: payload.chatId,
+                upvotes: chat.upvotes.length,
+                downvotes: chat.downvotes.length
             }
         }
         userManager.broadcast(payload.roomId, payload.userId, outgoingPayload)

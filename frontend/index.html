@@ -5,8 +5,8 @@
     <body>
         <script>
             const ws = new WebSocket("ws://localhost:8080", "echo-protocol");
-            userId = Math.floor(Math.random(), 10000);
-            chatId = Math.floor(Math.random(), 10000);
+            userId = Math.floor(Math.random() * 10000);
+            chatId = "2";
 
             ws.onopen = function() {
                ws.send(JSON.stringify({
@@ -22,22 +22,32 @@
             ws.onmessage = function(event) {
                 try {
                     const {payload, type} = JSON.parse(event.data);
+                    console.log("FDFD" + `${payload}`);
                     if(type == "ADD_CHAT") {
                         const textNode = document.createElement("p");
-                        textNode.innerHTML = payload.message + `(${payload.upvotes})`;
+                        textNode.innerHTML =   payload.message;
                         
-                        const button = document.createElement("button");
-                        button.innerHTML = `(${payload.upvotes})`;
-                        button.setAttribute("onclick", `sendUpvotes(${payload.chatId})`);
-                        button.setAttribute("id", `message-${payload.chatId}`);
+                        const upvoteButton = document.createElement("button");
+                        upvoteButton.innerHTML = `(${payload.upvotes})`;
+                        upvoteButton.setAttribute("onclick", `sendUpvotes(${payload.chatId})`);
+                        upvoteButton.setAttribute("id", `up-message-${payload.chatId}`);
+
+                        const downvoteButton = document.createElement("button");
+                        downvoteButton.innerHTML = `(${payload.upvotes})`;
+                        downvoteButton.setAttribute("onclick", `sendDownvotes(${payload.chatId})`);
+                        downvoteButton.setAttribute("id", `down-message-${payload.chatId}`);
                         
                         document.getElementById("chats").appendChild(textNode);
-                        document.getElementById("chats").appendChild(button);
+                        document.getElementById("chats").appendChild(upvoteButton);
+                        document.getElementById("chats").appendChild(downvoteButton);
                     }
 
                     if(type == "UPDATE_CHAT") {
-                        const button = document.getElementById(`message-${payload.chatId}`);
-                        button.innerHTML = `(${payload.upvotes})`;
+                        const upvoteButton = document.getElementById(`up-message-${payload.chatId}`);
+                        upvoteButton.innerHTML = `(${payload.upvotes})`;
+
+                        const downvoteButton = document.getElementById(`down-message-${payload.chatId}`);
+                        downvoteButton.innerHTML = `(${payload.downvotes})`;
                     }
                 } catch (e) {
                     console.error(e)
@@ -47,6 +57,17 @@
             function sendUpvotes(chatId) {
                 ws.send(JSON.stringify({
                     type: "UPVOTE_MESSAGE",
+                    payload: {
+                        chatId,
+                        userId: userId,
+                        roomId: "2"
+                    }
+               }));
+            }
+
+            function sendDownvotes(chatId) {
+                ws.send(JSON.stringify({
+                    type: "DOWNVOTE_MESSAGE",
                     payload: {
                         chatId,
                         userId: userId,

@@ -9,12 +9,16 @@ export type IncomingMessage = {
 } | {
     type: SupportedMessage.UpvoteMessage,
     payload: UpvoteMessageType
+} | {
+    type: SupportedMessage.DownvoteMessage,
+    payload: DownvoteMessageType
 }
 
 export enum SupportedMessage {
     JoinRoom =  "JOIN_ROOM",
     SendMessage = "SEND_MESSAGE",
-    UpvoteMessage = "UPVOTE_MESSAGE",   
+    UpvoteMessage = "UPVOTE_MESSAGE",
+    DownvoteMessage = "DOWNVOTE_MESSAGE"
 }
 
 
@@ -41,3 +45,11 @@ export const UpvoteMessage = z.object({
 })
 
 export type UpvoteMessageType = z.infer<typeof UpvoteMessage>;
+
+export const DownvoteMessage = z.object({
+    userId: z.string(),
+    roomId: z.string(),
+    chatId: z.string()
+})
+
+export type DownvoteMessageType = z.infer<typeof DownvoteMessage>;
