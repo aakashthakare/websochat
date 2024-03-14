@@ -4,12 +4,12 @@
             .chat-wrapper {
                 width: 300px;
                 height: 500px;
-                background: lightgrey;
+                background: rgb(228, 200, 200);
                 overflow: auto;
             }
             .chat {
                 width: 250px;
-                border: 1px solid gray;
+                border: 1px solid rgb(234, 203, 203);
                 height: auto;
                 border-radius: 10px;
                 margin: 5px;
@@ -34,6 +34,23 @@
             .other-user-message {
                 background-color: lightgoldenrodyellow;
                 float: left;
+            }
+            .send-box {
+                padding: 10px 0 10px 0;
+                background: lightgoldenrodyellow;
+                width: 300px;
+            }
+            .ws-chat-title {
+                background: lightcyan;
+                width: 300px;
+                font-size: 30px;
+                font-weight: bold;
+                text-align: center;
+            }
+            .main-wrapper {
+                width: auto;
+                padding-left: calc(50% - 150px);
+                padding-top: 2%;
             }
         </style>
          <script>
@@ -62,13 +79,6 @@
                         const textNode = document.createElement("p");
                         textNode.innerHTML = payload.name + ": " + payload.message + "</br>";
 
-                        if(payload.name == userName) {
-                            textNode.setAttribute("class", "chat current-user-message");
-                        } else {
-                            textNode.setAttribute("class", "chat other-user-message");
-                            
-                        }
-                        
                         const upvoteButton = document.createElement("button");
                         upvoteButton.innerHTML = "↑" + `${payload.upvotes}`;
                         upvoteButton.setAttribute("onclick", `sendUpvotes(${payload.chatId})`);
@@ -81,10 +91,17 @@
                         downvoteButton.setAttribute("id", `down-message-${payload.chatId}`);
                         downvoteButton.setAttribute("class", "vote-buttons down-vote-buttons");
                         
+                        if(payload.name == userName) {
+                            textNode.setAttribute("class", "chat current-user-message");
+                            downvoteButton.disabled = true;
+                            upvoteButton.disabled = true;
+                        } else {
+                            textNode.setAttribute("class", "chat other-user-message");
+                        }
+
                         textNode.appendChild(upvoteButton);
                         textNode.appendChild(downvoteButton);
                         document.getElementById("chats").appendChild(textNode);
-                        
                     }
 
                     if(type == "UPDATE_CHAT") {
@@ -152,9 +169,15 @@
         </script>
     </head>
     <body>
-       
-        <div id = "chats" class = "chat-wrapper"></div>
-        <input type="text" id = "inputtext"/>
-        <input type="button" id="send" value="Send" onclick="sendChat();">
+        <div class="main-wrapper">
+            <div class="ws-chat-title">
+                WS CHAT APP
+            </div>
+            <div id = "chats" class = "chat-wrapper"></div>
+            <div class="send-box">
+                <input type="text" id = "inputtext"/>
+                <input type="button" id="send" value="Send" onclick="sendChat();">
+            </div>
+        </div>
     </body>
 </html>
