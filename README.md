@@ -17,3 +17,6 @@ node di
 node dist/index.js
 brew install serve
 ```
+
+## Reference
+- [Code a simple Full Stack app with me](https://www.youtube.com/watch?v=pfZT6Opgy4o&t=10161s)
