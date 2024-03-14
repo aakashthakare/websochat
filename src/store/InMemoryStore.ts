@@ -77,4 +77,25 @@ export  class InMemoryStore implements Store {
         return chat;
     }
 
+    findTopChat(roomId: string) {
+        const room = this.store.get(roomId);
+        let topVotes = -1;
+        let topChatId: string | Chat | null = null;
+
+        room?.chats.forEach(chat => {
+            const votes = Math.abs(chat.upvotes.length - chat.downvotes.length);
+            if(votes > topVotes ) {
+                topVotes = votes;
+                topChatId = chat.id;
+            }
+        });
+        
+        
+        if(!topChatId) {
+            return;
+        }
+
+        return room?.chats.find(({id}) => id == topChatId);;
+    }
+
 }

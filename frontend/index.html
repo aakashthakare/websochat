@@ -1,6 +1,9 @@
 <html>
     <head>
         <style>
+            body {
+                background: #948686;
+            }
             .chat-wrapper {
                 width: 300px;
                 height: 500px;
@@ -35,10 +38,16 @@
                 background-color: lightgoldenrodyellow;
                 float: left;
             }
+            .top-voted-message {
+                background-color: rgb(224, 153, 87);
+                position: absolute;
+                top: 10%;
+                left: 60%;
+            }
             .send-box {
-                padding: 10px 0 10px 0;
+                padding: 10px;
                 background: lightgoldenrodyellow;
-                width: 300px;
+                width: 280px;
             }
             .ws-chat-title {
                 background: lightcyan;
@@ -46,11 +55,17 @@
                 font-size: 30px;
                 font-weight: bold;
                 text-align: center;
+                font-family: cursive;
             }
             .main-wrapper {
                 width: auto;
                 padding-left: calc(50% - 150px);
                 padding-top: 2%;
+            }
+            .send {
+                background: #119c11;
+                color: white;
+                width: 65px;
             }
         </style>
          <script>
@@ -87,7 +102,7 @@
                         upvoteButton.setAttribute("class", "vote-buttons up-vote-buttons");
 
                         const downvoteButton = document.createElement("button");
-                        downvoteButton.innerHTML = downvoteChar + `${payload.upvotes}`;
+                        downvoteButton.innerHTML = downvoteChar + `${payload.downvotes}`;
                         downvoteButton.setAttribute("onclick", `sendDownvotes(${payload.chatId})`);
                         downvoteButton.setAttribute("id", `down-message-${payload.chatId}`);
                         downvoteButton.setAttribute("class", "vote-buttons down-vote-buttons");
@@ -111,6 +126,33 @@
 
                         const downvoteButton = document.getElementById(`down-message-${payload.chatId}`);
                         downvoteButton.innerHTML = downvoteChar + `${payload.downvotes}`;
+                    }
+
+                    if(type == "UPDATE_TOP_CHAT") {
+                        const textNode = document.createElement("p");
+                        textNode.innerHTML = "📌 " + payload.name + ": " + payload.message + "</br>";
+                        textNode.setAttribute("class", "chat top-voted-message");
+
+                        const upvoteButton = document.createElement("button");
+                        upvoteButton.innerHTML = upvoteChar + `${payload.upvotes}`;
+                        upvoteButton.setAttribute("onclick", `sendUpvotes(${payload.chatId})`);
+                        upvoteButton.setAttribute("id", `up-message-${payload.chatId}`);
+                        upvoteButton.setAttribute("class", "vote-buttons up-vote-buttons");
+
+                        const downvoteButton = document.createElement("button");
+                        downvoteButton.innerHTML = downvoteChar + `${payload.downvotes}`;
+                        downvoteButton.setAttribute("onclick", `sendDownvotes(${payload.chatId})`);
+                        downvoteButton.setAttribute("id", `down-message-${payload.chatId}`);
+                        downvoteButton.setAttribute("class", "vote-buttons down-vote-buttons");
+
+                        downvoteButton.disabled = true;
+                        upvoteButton.disabled = true;
+
+                        textNode.appendChild(upvoteButton);
+                        textNode.appendChild(downvoteButton);
+
+                        document.getElementById("top-pinned").innerHTML = '';
+                        document.getElementById("top-pinned").appendChild(textNode);
                     }
                 } catch (e) {
                     console.error(e)
@@ -137,6 +179,7 @@
                         roomId
                     }
                }));
+
             }
 
             function sendChat() {
@@ -158,7 +201,7 @@
             
             window.onload = function() {
                 var input = document.getElementById("inputtext");
-            
+                input.focus();
                 input.addEventListener("keypress", function(event) {
                 
                     if (event.key === "Enter") {
@@ -172,12 +215,16 @@
     <body>
         <div class="main-wrapper">
             <div class="ws-chat-title">
-                WS CHAT APP
+                WebSocket Chat
             </div>
+            
             <div id = "chats" class = "chat-wrapper"></div>
             <div class="send-box">
-                <input type="text" id = "inputtext"/>
-                <input type="button" id="send" value="Send" onclick="sendChat();">
+                <input type="text" style ="width: 200px;" id = "inputtext"/>
+                <input type="button" class="send" id="send" value="Send" onclick="sendChat();">
+            </div>
+            <div id="top-pinned">
+
             </div>
         </div>
     </body>

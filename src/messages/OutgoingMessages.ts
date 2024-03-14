@@ -1,6 +1,7 @@
 export enum SupportedMessage {
     AddChat = "ADD_CHAT",
-    UpdateChat = "UPDATE_CHAT"
+    UpdateChat = "UPDATE_CHAT",
+    UpdateTopChat = "UPDATE_TOP_CHAT",
 }
 
 type MessagePayload = {
@@ -17,5 +18,8 @@ export type OutgoingMessage = {
     payload: MessagePayload
 } | {
     type: SupportedMessage.UpdateChat
+    payload: Partial<MessagePayload>
+}  | {
+    type: SupportedMessage.UpdateTopChat
     payload: Partial<MessagePayload>
 }

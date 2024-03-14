@@ -48,6 +48,7 @@ wsServer.on('request', function(request) {
                 console.log(message.utf8Data)
                 messageHandler(connection, JSON.parse(message.utf8Data))
             } catch(e) {
+                console.error(e);
                 console.log("Failed to handle the message.")
             }
         }
@@ -110,7 +111,7 @@ function messageHandler(ws: connection, message: IncomingMessage) {
                 downvotes: chat.downvotes.length
             }
         }
-        userManager.broadcast(payload.roomId, payload.userId, outgoingPayload)
+        userManager.broadcast(payload.roomId, payload.userId, outgoingPayload);
     }
 
     if(message.type == SupportedMessage.DownvoteMessage) {
@@ -128,6 +129,28 @@ function messageHandler(ws: connection, message: IncomingMessage) {
                 downvotes: chat.downvotes.length
             }
         }
-        userManager.broadcast(payload.roomId, payload.userId, outgoingPayload)
+        userManager.broadcast(payload.roomId, payload.userId, outgoingPayload);
+    }
+
+    if(message.type == SupportedMessage.DownvoteMessage || 
+        message.type == SupportedMessage.UpvoteMessage) {
+        const payload = message.payload;
+        const chat = store.findTopChat(payload.roomId);
+        
+        if(!chat) return;
+
+        const outgoingPayload: OutgoingMessage = {
+            type: OutgoingSupportedMessages.UpdateTopChat,
+            payload: {
+                roomId: payload.roomId,
+                chatId: payload.chatId,
+                upvotes: chat.upvotes.length,
+                downvotes: chat.downvotes.length,
+                message: chat.message,
+                name: chat.name
+            }
+        }
+
+        userManager.broadcast(payload.roomId, payload.userId, outgoingPayload);
     }
 }
